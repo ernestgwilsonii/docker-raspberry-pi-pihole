@@ -1,0 +1,33 @@
+version: "3.8"
+
+services:
+  pihole:
+    image: pihole/pihole:latest
+    networks:
+      macvlan_network:
+        ipv4_address: 172.28.0.2
+    environment:
+      ServerIP: 172.28.0.2
+    #   TZ: 
+    #   WEBPASSWORD: 
+    #   TEMPERATUREUNIT: 'C'
+    #   IPv6: 'false'
+    volumes:
+      - type: bind
+        source: /opt/docker/pi-hole/etc/pihole
+        target: /etc/pihole
+      - type: bind
+        source: /opt/docker/pi-hole/etc/dnsmasq.d
+        target: /etc/dnsmasq.d
+    cap_add:
+      - NET_ADMIN
+    deploy:
+      labels:
+        local.description: "Pi-hole"
+      restart_policy:
+        condition: on-failure
+
+networks:
+  macvlan_network:
+    external:
+      name: pi-hole_network
